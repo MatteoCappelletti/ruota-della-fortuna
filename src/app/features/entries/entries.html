@@ -1,0 +1,64 @@
+<aside class="list-panel">
+  <div class="panel-heading list-heading">
+    <div>
+      <p class="eyebrow">IL TUO GRUPPO</p>
+      <h2>Le opzioni</h2>
+    </div>
+    <span class="list-total">{{ entries().length }}</span>
+  </div>
+
+  <form class="add-form" (submit)="addEntry($event)">
+    <label class="sr-only" for="new-entry">Aggiungi un nome o un'opzione</label>
+    <input
+      id="new-entry"
+      type="text"
+      placeholder="Scrivi un nome..."
+      [value]="draft()"
+      (input)="updateDraft($event)"
+      maxlength="40"
+      autocomplete="off"
+      [disabled]="disabled()"
+    />
+    <button type="submit" class="add-button" aria-label="Aggiungi opzione" [disabled]="disabled()">+</button>
+  </form>
+
+  @if (entries().length) {
+    <ul class="entry-list" aria-label="Opzioni della ruota">
+      @for (entry of entries(); track $index; let index = $index) {
+        <li class="entry-row">
+          <span class="entry-index">{{ (index + 1).toString().padStart(2, '0') }}</span>
+          <span class="entry-name">{{ entry }}</span>
+          <button
+            type="button"
+            class="remove-button"
+            [attr.aria-label]="'Rimuovi ' + entry"
+            [disabled]="disabled()"
+            (click)="entryRemoved.emit(index)"
+          >
+            ×
+          </button>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="empty-list">
+      <span aria-hidden="true">✳</span>
+      <p>La ruota è vuota.<br />Aggiungi la prima opzione!</p>
+    </div>
+  }
+
+  <div class="list-footer">
+    <p>Le modifiche restano qui finché non salvi la tua lista.</p>
+    <div class="list-actions">
+      <button type="button" class="text-button" (click)="restoreRequested.emit()">
+        <span aria-hidden="true">↺</span> Ripristina salvati
+      </button>
+      <button type="button" class="save-button" (click)="saveRequested.emit()">
+        <span aria-hidden="true">↓</span> Salva lista
+      </button>
+    </div>
+    @if (storageMessage()) {
+      <p class="storage-message" role="status">{{ storageMessage() }}</p>
+    }
+  </div>
+</aside>

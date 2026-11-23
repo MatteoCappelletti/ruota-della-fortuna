@@ -1,0 +1,37 @@
+<div
+  class="wheel-wrap"
+  [class.dragging]="isDragging()"
+  title="Trascina la ruota per farla girare"
+  (pointerdown)="startDrag($event)"
+  (pointermove)="moveDrag($event)"
+  (pointerup)="finishDrag()"
+  (pointercancel)="finishDrag()"
+>
+  <div class="wheel-pointer" aria-hidden="true"></div>
+  <svg class="wheel-svg" viewBox="0 0 400 400" role="img" aria-label="Trascina la ruota per farla girare">
+    <circle cx="200" cy="200" r="196" class="wheel-rim"></circle>
+    <g
+      class="wheel-rotation"
+      [style.transform]="'rotate(' + (rotation() + dragRotation()) + 'deg)'"
+      [style.transition-duration]="isDragging() ? '0ms' : duration() + 'ms'"
+      (transitionend)="animationFinished()"
+    >
+      @for (slice of slices; track slice.index) {
+        <path [attr.d]="slice.path" [attr.fill]="slice.color" class="wheel-slice"></path>
+        <text
+          [attr.x]="slice.labelX"
+          [attr.y]="slice.labelY"
+          [attr.transform]="'rotate(' + slice.labelRotation + ' ' + slice.labelX + ' ' + slice.labelY + ')'"
+          [attr.aria-label]="slice.label"
+          [style.font-size.px]="slice.fontSize"
+          class="wheel-label"
+        >
+          <title>{{ slice.label }}</title>
+          {{ slice.displayLabel }}
+        </text>
+      }
+    </g>
+    <circle cx="200" cy="200" r="28" class="wheel-hub"></circle>
+    <circle cx="200" cy="200" r="8" class="wheel-hub-dot"></circle>
+  </svg>
+</div>
